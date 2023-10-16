@@ -1,0 +1,83 @@
+--Step-by-Step Guide: Creating a Simple Cabinet with Lua
+
+Step 1: Initial Setup
+At the beginning of the script, we define a function called `main`. This function serves as the starting point of our program.
+
+lua
+function main()
+
+
+Inside the `main` function, we create a table called `data` that will store information about our cabinet. This table includes properties such as `width`, `depth`, `height`, `thick`, and `name`. It also has an empty table called `carcass` where we'll store the cabinet's components.
+
+```lua
+local data = {width = 500, depth = 500, height = 100, thick = 18, name = "Box", carcass = {}}
+```
+
+#### Step 2: Creating the Cabinet
+We then call a function named `recreate_geometry` and pass our `data` table as an argument. This function will create the cabinet based on the properties defined in the `data` table.
+
+```lua
+recreate_geometry(data)
+```
+
+#### Step 3: Displaying a Dialog
+Next, we use the `pyui.run_modal_dialog` function to display a user interface dialog. This dialog is defined by the `cube_dialog` function. It allows the user to input or change the cabinet's dimensions and name.
+
+```lua
+pyui.run_modal_dialog(cube_dialog, data)
+```
+
+#### Step 4: Editing the Cabinet (Optional)
+There's an optional function called `edit_block`. This function is not initially called in the `main` function but can be used to edit an existing cabinet.
+
+```lua
+function edit_block(element)
+```
+
+Inside the `edit_block` function, we retrieve the data of an existing cabinet and display it in the dialog for editing.
+
+```lua
+loaded_data = pytha.get_element_history(element, "block_history")
+recreate_geometry(loaded_data)
+pyui.run_modal_dialog(cube_dialog, loaded_data)
+pyio.save_values("default_dimensions", loaded_data)
+```
+
+#### Step 5: Customizing the User Interface
+The `cube_dialog` function defines the layout and behavior of the dialog. It sets labels for width, depth, height, thickness, and name. It also creates text boxes for input, as well as OK and Cancel buttons.
+
+```lua
+function cube_dialog(dialog, data)
+```
+
+For each input field (width, depth, height, thickness, and name), it defines an event handler to update the `data` table whenever the user changes a value.
+
+#### Step 6: Creating the Cabinet
+The `recreate_geometry` function is responsible for creating the cabinet based on the values in the `data` table. It starts by deleting any existing cabinet, if there is one.
+
+```lua
+function recreate_geometry(data)
+```
+
+Then, it creates the cabinet components (left, right, top, and bottom sides) based on the dimensions specified in the `data` table. These components are added to the `carcass` table.
+
+```lua
+left = pytha.create_block(data.thick, data.depth, data.height, {0, 0, 0})
+table.insert(data.carcass, left)
+```
+
+#### Step 7: Grouping Cabinet Components
+After creating the cabinet components, they are grouped together using `pytha.create_group`. This group represents the complete cabinet.
+
+```lua
+data.main_group = pytha.create_group(data.carcass)
+```
+
+#### Step 8: Saving Edit History (Optional)
+If the cabinet is edited, the function saves the edit history by using `pytha.set_element_history`. This allows for potential future editing.
+
+```lua
+pytha.set_element_history(data.main_group, data, "block_history")
+```
+
+That's it! This script creates a basic cabinet, and the optional `edit_block` function allows for editing an existing cabinet. Students can experiment with the dimensions and name in the dialog to see how it affects the cabinet's appearance.
